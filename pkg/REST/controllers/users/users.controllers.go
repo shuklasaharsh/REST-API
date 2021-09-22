@@ -8,17 +8,16 @@ import (
 )
 
 func CreateUser(ctx *fiber.Ctx) error {
-	putUser:= new(users_entity.User)
-	err:= ctx.BodyParser(putUser)
+	var putUser users_entity.User
+	err:= ctx.BodyParser(&putUser)
 	if err != nil {
 		log.Println(err)
 		return ctx.Status(400).JSON(&fiber.Map{
 			"status": "failed",
 			"message": err,
 		})
-
 	}
-	user, err := users_service.CreateUser(*putUser)
+	user, err := users_service.CreateUser(putUser)
 	if err != nil {
 		log.Println(err)
 		return ctx.Status(400).JSON(&fiber.Map{

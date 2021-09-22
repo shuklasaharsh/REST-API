@@ -31,15 +31,15 @@ func GetUser(id uint) (*users_entity.User, error) {
 	return &user, nil
 }
 
-func GetAllUsers() (*[]users_entity.User, error) {
+func GetAllUsers() ([]*users_entity.User, error) {
 	db := database.GetDB()
-	var users[] users_entity.User
+	var users[] *users_entity.User
 	err := db.Model(users_entity.User{}).Find(&users).Error
 
 	if err != nil {
 		return nil, err
 	}
-	return &users, nil
+	return users, nil
 }
 
 func UpdateUser(id int, name string, email string) (*users_entity.User, error) {
