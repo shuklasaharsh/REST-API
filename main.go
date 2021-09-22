@@ -3,8 +3,11 @@ package main
 import (
 	"fmt"
 	"github.com/fatih/color"
-	"github.com/spf13/viper"
+	"github.com/gofiber/fiber/v2"
+	usersroutes "github.com/shuklasaharsh/REST-API/pkg/REST/routes/users"
 	database "github.com/shuklasaharsh/REST-API/pkg/database"
+	users_entity "github.com/shuklasaharsh/REST-API/pkg/entity/users"
+	"github.com/spf13/viper"
 	"log"
 )
 
@@ -22,9 +25,16 @@ func main() {
 	if !ok {
 		log.Panicln(fmt.Errorf("DB URL was not found"))
 	}
-	_, err := database.ConnectDB(url)
+	db, err := database.ConnectDB(url)
+	err= db.AutoMigrate(&users_entity.User{})
+	if err != nil {
+		log.Panicln(fmt.Errorf("Error Migrating Models: %w ", err))
+	}
 	if err!= nil {
 		log.Panicln(fmt.Errorf("Database could not be connected: %w ", err))
 	}
+	app:=fiber.New()
+	usersroutes.InitialiseRoutes(app)
+	log.Fatalln(app.Listen(":3000"))
 
 }
